@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src/",
+    "outFile": "./build/sketch.js",
+    "sourceMap": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "target": "ES5"
+  },
+  "include": [
+    "src/**/*",
+    "node_modules/@types/p5/global.d.ts"
+  ],
+  // "exclude": ["node_modules"]
+}

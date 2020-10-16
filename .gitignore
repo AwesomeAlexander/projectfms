@@ -1,0 +1,4 @@
+node_modules/
+build/sketch.js
+
+.vscode/
