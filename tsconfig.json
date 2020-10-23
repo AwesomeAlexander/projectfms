@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "rootDir": "./src/",
-    "outFile": "./build/sketch.js",
+    "outDir": "./build/",
+    "module": "commonjs",
     "sourceMap": true,
     "removeComments": true,
     "preserveConstEnums": true,
