@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "./src/",
     "outDir": "./build/",
-    "module": "commonjs",
+    // "module": "ES6",
     "sourceMap": true,
     "removeComments": true,
     "preserveConstEnums": true,

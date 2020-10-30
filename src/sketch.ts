@@ -4,15 +4,6 @@ var osc;
 let curMousedKey: Key;
 let curPressedKeys: Key[];
 
-// Button
-// class Button {
-//   constructor(x,y,width,height) {
-    
-//   }
-
-  
-// }
-
 // A key
 interface Key {
   midiFreq: number,
@@ -21,7 +12,8 @@ interface Key {
   width: number,
   height: number,
   keyCode?: number,
-  isBlack?: boolean
+  isBlack?: boolean,
+  fillColor?: any
 }
 
 /**
@@ -45,7 +37,7 @@ function makeKey(midiFreq: number, x: number, y: number, width: number, height: 
     isBlack: isBlack
   };
 }
-  
+
 /**
  * Tests whether a coordinate point is within this object's bounds
  * @param pointX the x coord to test
@@ -78,8 +70,9 @@ interface Keyboard {
 };
 var keyboard: Keyboard;
 
-function drawKey(keyboard:Keyboard, key: Key, filler?) {
-  if (!!filler) fill(filler);
+function drawKey(keyboard:Keyboard, key: Key) {
+  if (key.fillColor) fill(key.fillColor);
+  else fill( (!key.isBlack) ? 255 : 0 );
   rect(key.x + keyboard.x, key.y + keyboard.y, key.width, key.height);
 }
 
@@ -99,7 +92,7 @@ function drawKey(keyboard:Keyboard, key: Key, filler?) {
 
 function setup() {
   createCanvas(1200, 400);
-  stroke("black");
+  stroke(0);
 
   // A triangle oscillator
   osc = new p5.TriOsc();
@@ -126,7 +119,7 @@ function setup() {
   // black keys
   let bw = w * 0.4; // TODO unhardcode x
   let bx = w - bw/2;
-  keyboard.keys.push(makeKey(61, bx, 0, bw, keyboard.height * 0.6, 87, true));
+  keyboard.keys.push(makeKey(61, bx, 0, bw, keyboard.height * 0.6, 87, true ));
   keyboard.keys.push(makeKey(63, 180, 0, bw, keyboard.height * 0.6, 69, true ));
   keyboard.keys.push(makeKey(66, 380, 0, bw, keyboard.height * 0.6, 85, true ));
   keyboard.keys.push(makeKey(68, 480, 0, bw, keyboard.height * 0.6, 73, true ));
@@ -138,35 +131,19 @@ function draw() {
   let mouseOnBlack = false;
   curMousedKey = null;
   for (let k of keyboard.keys) {
-    // Default unhighlighted colors
-    let filler: any = (k.isBlack) ? 0 : 255;
-    // if (k.isBlack) fill(0);
-    // else fill(255);
-
     // Mouse
     if (isWithin(keyboard, k, mouseX, mouseY)) {
       if (k.isBlack) mouseOnBlack = true;
       curMousedKey = k;
-      filler = (mouseIsPressed) ? "yellow" : "green";
-      // if (mouseIsPressed) fill("yellow");
-      // else fill("green");
+      // if (k.fillColor != "yellow") k.fillColor = "green";
+    } else {
+      // if (k.fillColor == "green") k.fillColor = null;
     }
-    
+ 
     // Draw
-    // keyboard.drawKey(k);
-    drawKey(keyboard, k, filler);
+    drawKey(keyboard, k);
     
-    // // Mouse & drawing
-    // if (isWithin(mouseX, mouseY, k.x + keyboard.x, k.y + keyboard.y, k.width, k.height)) {
-    //   if (mouseIsPressed) fill(100, 255, 100); // played
-    //   else fill("yellow"); // highlighted
-    //   highlighted = true;
-    // }
-    // rect(k.x + keyboard.x, k.y + keyboard.y, k.width, k.height);
   }
-
-  // selected.forEach(k => playNote(k.midiFreq));
-  // selected = [];
 }
 
 // A function to play a note
@@ -189,20 +166,28 @@ function keyPressed() {
     else curPressedKeys = curPressedKeys.filter(u => u != k); // remove k
   });
 
-  curPressedKeys.forEach(k => playNote(k.midiFreq));
+  curPressedKeys.forEach(k => {
+    playNote(k.midiFreq);
+    k.fillColor = "yellow";
+  });
 }
 
 function keyReleased() {
+  curPressedKeys.forEach(k => k.fillColor = null);
   osc.fade(0, 0.5);
 }
 
 // When we click
 function mousePressed() {
-  if (!!curMousedKey) playNote(curMousedKey.midiFreq);
+  if (!!curMousedKey) {
+    playNote(curMousedKey.midiFreq);
+    curMousedKey.fillColor = "yellow";
+  }
 }
 
 
 // Fade it out when we release
 function mouseReleased() {
+  curMousedKey.fillColor = null;
   osc.fade(0, 0.5);
 }
